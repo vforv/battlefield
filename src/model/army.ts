@@ -1,6 +1,6 @@
 import { ISquad } from './squad';
 
 export interface IArmy {
-    name: 'string';
+    name: string;
     squads: ISquad[];
 }

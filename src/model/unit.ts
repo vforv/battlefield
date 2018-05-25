@@ -1,14 +1,16 @@
 export interface IUnit {
-    type: 'soldier' | 'vehicle';
     health: number;
     recharge: number;
-    entity: ISoldier | IVehicles;
+    soldiers: ISoldier[];
+    vehicles: IVehicles[];
 }
 
 interface ISoldier {
+    type: 'soldier';
     experience: number;
 }
 
 interface IVehicles {
+    type: 'vehicle';
     operators: number;
 }
