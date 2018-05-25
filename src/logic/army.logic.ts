@@ -1,6 +1,7 @@
 import { Service } from 'justinject';
 import { ARMIES } from '../db';
 import { random } from './helper';
+import { IArmy } from '../model/army';
 
 @Service()
 export class ArmyLogic {
@@ -10,7 +11,7 @@ export class ArmyLogic {
         this.maxNumber = ARMIES.length;
     }
 
-    public getDefendingArmy() {
+    public getDefendingArmy(): IArmy {
         const rndArmy = random(1, this.maxNumber);
         // if not ally add 
         return ARMIES[rndArmy];

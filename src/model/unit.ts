@@ -5,12 +5,12 @@ export interface IUnit {
     vehicles: IVehicles[];
 }
 
-interface ISoldier {
+export interface ISoldier {
     type: 'soldier';
     experience: number;
 }
 
-interface IVehicles {
+export interface IVehicles {
     type: 'vehicle';
     operators: number;
 }
