@@ -3,18 +3,20 @@ import { ARMIES } from '../db';
 import { random } from './helper';
 import { IArmy } from '../model/army';
 
-@Service()
+@Service('singleton')
 export class ArmyLogicService {
 
     constructor() { }
 
-    public getDefendingArmy(attacker: IArmy) {
-        const defenders = ARMIES.filter((army: IArmy) => army != attacker)
+    public getDefendingArmy(attacker: IArmy): IArmy {
+        const defenders = ARMIES
+            .filter((army: IArmy) => army.active)
+            .filter((army: IArmy) => army != attacker);
 
-        const maxNumber = defenders.length - 1;
+        const maxNumber = defenders.length;
         const rndArmy = random(1, maxNumber);
-
-        return ARMIES[rndArmy];
+        const defendingArmy = defenders[rndArmy - 1];
+        return defendingArmy;
     }
 
 }

@@ -18,6 +18,7 @@ describe('Test army', () => {
             const army = Container.resolve<ArmyLogicService>(ArmyLogicService);
             const defendingArmy = army.getDefendingArmy(ARMIES[0]);
             expect(defendingArmy.name).exist;
+            expect(defendingArmy.name).to.not.be.equals('Army1');
 
             recursive(n + 1);
         }
