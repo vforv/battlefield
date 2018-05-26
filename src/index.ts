@@ -1,11 +1,11 @@
+import { Service, Container } from 'justinject';
+import { SquadLogicService } from './logic/squad.logic';
 import { ARMIES } from './db';
-import { Service } from 'justinject';
-import { SquadLogic } from './logic/squad.logic';
 
 @Service()
-class Battlefield {
-    
-    constructor(private _squadLogic: SquadLogic) {
+class BattlefieldService {
+
+    constructor(private _squadLogic: SquadLogicService) {
 
     }
 
@@ -14,14 +14,13 @@ class Battlefield {
     }
 
     public attack() {
-        while(!this.getWiner('')) {
+        while (!this.getWiner('')) {
             ARMIES.forEach((attackingArmy) => {
                 attackingArmy.squads.forEach((squad) => {
-
                     const attackingSquadSuccessProbability = this._squadLogic.squadAttackProbabilty(squad);
-                    const defendingSquadSuccessProbability = this._squadLogic.squadAttackProbabilty(this._squadLogic.getDefendingSquad());
+                    const defendingSquadSuccessProbability = this._squadLogic.squadAttackProbabilty(this._squadLogic.getDefendingSquad(attackingArmy));
 
-                    if(attackingSquadSuccessProbability > defendingSquadSuccessProbability) {
+                    if (attackingSquadSuccessProbability > defendingSquadSuccessProbability) {
                         console.log("Damage dealt from to")
                     }
                     // squad.unit.vehicles.forEach((vehicle) => {
@@ -30,9 +29,9 @@ class Battlefield {
 
                 })
             })
-        }  
+        }
     }
 }
 
-const att = new Battlefield();
+const att = Container.resolve<BattlefieldService>(BattlefieldService);
 att.attack();

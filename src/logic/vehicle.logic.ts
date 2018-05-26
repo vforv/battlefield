@@ -1,12 +1,12 @@
 import { Service } from 'justinject';
 
 @Service()
-export class VehicleLogic {
+export class VehicleLogicService {
     public vehicleAttackProbabilty(health: number, experience: number): number {
-        return;
+        return 1;
     }
 
     public vehicleDamage(experience: number): number {
-        return;
+        return 1;
     }
 }

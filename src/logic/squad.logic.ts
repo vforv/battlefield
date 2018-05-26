@@ -1,14 +1,14 @@
 import { Service } from 'justinject';
-import { ArmyLogic } from './army.logic';
+import { ArmyLogicService } from './army.logic';
 import { IArmy } from '../model/army';
 import { random } from './helper';
 import { ISquad } from '../model/squad';
-import { SoldierLogic } from './solider.logic';
+import { SoldierLogicService } from './solider.logic';
 
 @Service()
-export class SquadLogic {
+export class SquadLogicService {
 
-    constructor(private _armyLogic: ArmyLogic, private _soldierLogic: SoldierLogic) {
+    constructor(private _armyLogic: ArmyLogicService, private _soldierLogic: SoldierLogicService) {
 
     }
 
@@ -22,7 +22,7 @@ export class SquadLogic {
     }
 
     public getRandomSquad(army: IArmy): ISquad {
-        const maxNumber = army.squads.length;
+        const maxNumber = army.squads.length - 1;
         const rndNumber = random(1, maxNumber);
 
         return army.squads[rndNumber];
@@ -36,8 +36,8 @@ export class SquadLogic {
 
     }
 
-    public getDefendingSquad(): ISquad {
-        const army = this._armyLogic.getDefendingArmy();
+    public getDefendingSquad(attacker: IArmy): ISquad {
+        const army = this._armyLogic.getDefendingArmy(attacker);
 
         return this.getRandomSquad(army);
     }

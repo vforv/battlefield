@@ -4,16 +4,16 @@ import { random } from './helper';
 import { IArmy } from '../model/army';
 
 @Service()
-export class ArmyLogic {
-    private maxNumber: number;
+export class ArmyLogicService {
 
-    constructor() {
-        this.maxNumber = ARMIES.length;
-    }
+    constructor() { }
 
-    public getDefendingArmy(): IArmy {
-        const rndArmy = random(1, this.maxNumber);
-        // if not ally add 
+    public getDefendingArmy(attacker: IArmy) {
+        const defenders = ARMIES.filter((army: IArmy) => army != attacker)
+
+        const maxNumber = defenders.length - 1;
+        const rndArmy = random(1, maxNumber);
+
         return ARMIES[rndArmy];
     }
 
