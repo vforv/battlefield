@@ -2,6 +2,7 @@ import { Service } from 'justinject';
 import { random } from './helper';
 import { ISoldier, IUnit } from '../model/unit';
 import { ARMIES } from '../db';
+import { ISquad } from '../model/squad';
 
 @Service()
 export class SoldierLogicService {
@@ -26,17 +27,22 @@ export class SoldierLogicService {
     }
 
     public addSoldierExp(armyName: string, squadName: string) {
-        ARMIES.forEach((army) => {
-            if (army.name === armyName) {
-                army.squads.forEach((squad) => {
-                    if (squad.name === squadName) {
-                        squad.unit.soldiers.forEach((soldier) => {
-                            soldier.experience += 1;
-                        })
-                    }
-                })
-            }
+        const army: any = ARMIES.find((army) => army.name === armyName);
+        const squad: ISquad = army.squads.find((squad: ISquad) => squad.name === squadName);
+
+        squad.unit.soldiers.forEach((soldier) => {
+            soldier.experience += 1;
         })
+    }
+
+    public soldierExpSum(soldiers: ISoldier[]): any {
+        const EXP = soldiers
+            .map((soldier) => soldier.experience)
+            .reduce((prev: number, next: number) => {
+                return prev + next;
+            });
+
+        return EXP
     }
 
     public soldierDamage(experience: number): number {

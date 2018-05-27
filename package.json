@@ -15,11 +15,15 @@
     "lodash": "^4.17.10",
     "rx": "^4.1.0",
     "tsc": "^1.20150623.0",
-    "typescript": "^2.8.3"
+    "typescript": "^2.8.3",
+    "uuid": "^3.2.1"
   },
   "devDependencies": {
+    "@types/dotenv": "^4.0.3",
     "@types/lodash": "^4.14.109",
+    "@types/uuid": "^3.4.3",
     "chai": "^4.1.2",
+    "dotenv": "^5.0.1",
     "mocha": "^5.2.0"
   }
 }
