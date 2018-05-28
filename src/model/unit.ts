@@ -8,6 +8,8 @@ export interface IUnit {
 export interface ISoldier {
     type: 'soldier';
     experience: number;
+    recharge: number;
+    health: number;
 }
 
 export interface IVehicles {

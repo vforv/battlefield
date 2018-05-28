@@ -1,10 +1,10 @@
 import * as chai from 'chai';
 import { Container } from 'justinject';
 import { ArmyLogicService } from '../src/logic/army.logic';
+// Should use some mock data
 import { ARMIES } from '../src/db';
 
 const expect = chai.expect;
-const assert = chai.assert;
 
 describe('Test army', () => {
 

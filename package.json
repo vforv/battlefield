@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
+    "start": "node dist",
+    "prestart": "tsc",
+    "dev": "ts-node src",
     "test": "mocha -r ts-node/register test/**/*.test.ts",
     "compile": "tsc"
   },
@@ -24,6 +27,7 @@
     "@types/uuid": "^3.4.3",
     "chai": "^4.1.2",
     "dotenv": "^5.0.1",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "ts-node": "^6.0.5"
   }
 }

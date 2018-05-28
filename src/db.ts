@@ -1,45 +1,59 @@
 import { IArmy } from './model/army';
 import { ISquad } from './model/squad';
-import { ISoldier, IVehicles } from './model/unit';
+import { ISoldier } from './model/unit';
 import * as env from 'dotenv';
 import * as uuid from 'uuid';
 import * as _ from 'lodash';
+import { random } from './logic/helper';
 env.config();
 
 let squads: any = [];
 let armies: any = [];
-let soldiers: any = [];
-let vehicles: any = [];
 
-for (let i = 1; i <= process.env.SOLDIERS; i++) {
+function getSoldiers() {
+    const soldiers = [];
 
-    let soldier: ISoldier = {
-        type: 'soldier',
-        experience: 0,
+    for (let i = 1; i <= process.env.SOLDIERS; i++) {
+
+        let soldier: ISoldier = {
+            type: 'soldier',
+            experience: 0,
+            recharge: random(100, 2000),
+            health: random(1, 100),
+        }
+        
+        // let vehicle: IVehicles = {
+        //     type: 'vehicle',
+        //     operators: 1,
+        // }
+
+        soldiers.push(soldier);
     }
 
-    let vehicle: IVehicles = {
-        type: 'vehicle',
-        operators: 1,
-    }
-
-    vehicles.push(vehicle);
-    soldiers.push(soldier);
+    return soldiers;
 }
 
+
 for (let i = 1; i <= process.env.SQUADS; i++) {
-    const soldiersNew = _.default.cloneDeep(soldiers);
-    const vehiclesNew = _.default.cloneDeep(vehicles);
+    const soldiersNew: ISoldier[] = _.cloneDeep(getSoldiers());
+
+    const soldiersHealths: number[] = soldiersNew.map((soldierNew) => soldierNew.health);
+
+    const squadHealth = Math.max(...soldiersHealths);
+
+    const soldiersRecharge: number[] = soldiersNew.map((soldierNew) => soldierNew.recharge);
+
+    const squadRecharge = Math.max(...soldiersRecharge);
 
     let squad: ISquad = {
         id: uuid.v1(),
         name: `Squad${i}`,
         active: true,
         unit: {
-            health: 100,
-            recharge: 1000,
+            health: squadHealth,
+            recharge: squadRecharge,
             soldiers: soldiersNew,
-            vehicles: vehiclesNew,
+            vehicles: [],
         }
     }
 
@@ -53,7 +67,7 @@ for (let i = 1; i <= process.env.ARMIES; i++) {
         strategy = process.env[`Army${i}`];
     }
 
-    const squadsNew = _.default.cloneDeep(squads)
+    const squadsNew = _.cloneDeep(squads)
 
     let army: IArmy = {
         id: uuid.v1(),
@@ -66,6 +80,6 @@ for (let i = 1; i <= process.env.ARMIES; i++) {
     armies.push(army);
 }
 
-const armiesNew = _.default.cloneDeep(armies)
+const armiesNew = _.cloneDeep(armies)
 
 export const ARMIES: IArmy[] = armiesNew;

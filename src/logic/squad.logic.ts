@@ -10,25 +10,56 @@ import * as _ from 'lodash';
 @Service()
 export class SquadLogicService {
 
-    constructor(private _armyLogic: ArmyLogicService, private _soldierLogic: SoldierLogicService) {
+    constructor(
+        private _armyLogic: ArmyLogicService,
+        private _soldierLogic: SoldierLogicService,
+    ) { }
 
-    }
-
+    /**
+     * this will calculate squad porbability
+     * and squad damage
+     * 
+     * @param squad for this squad we want to get power
+     */
     public squadAttack(squad: ISquad): { prob: number, damage: number } {
-        const soldierProb = this._soldierLogic.soldierSum(squad.unit);
+        const soldierProb = this._soldierLogic
+            .soldierAttackingData(squad.unit);
+
+        // Sum it with Vehicle here
+
         return soldierProb;
     }
 
-    public damageSquad(armyName: string, squadName: string, attackerData: { prob: number, damage: number }, defenderData: { prob: number, damage: number }): Promise<boolean> {
+    /**
+     * This will comapre prob and do damage to defending squad
+     * 
+     * @param armyName Defending army
+     * @param squadName Defending squad
+     * @param attackerData Attacker damage and prob
+     * @param defenderData Defender damage and prob
+     */
+    public damageSquad(
+        armyName: string,
+        squadName: string,
+        attackerData: { prob: number, damage: number },
+        defenderData: { prob: number, damage: number },
+    ): Promise<boolean> {
         return new Promise((resolve: any, reject: any) => {
             if (attackerData.prob > defenderData.prob) {
+                const army: any = ARMIES
+                    .find((army) => army.name === armyName);
 
-                const army: any = ARMIES.find((army) => army.name === armyName);
-                const activeSquads = army.squads.map((squad: ISquad) => squad.active);
-                const squad: ISquad = army.squads.find((squad: ISquad) => squad.name === squadName);
+                const squad: ISquad = army
+                    .squads
+                    .find((squad: ISquad) => squad.name === squadName);
 
                 if (squad.unit.health > 0) {
-                    squad.unit.health -= attackerData.damage + 95;
+                    squad.unit.health -= Math.ceil(attackerData.damage) + process.env.ADDITIONAL_DAMAGE;
+
+                    if (squad.unit.health < 0) {
+                        squad.unit.health = 0;
+                    }
+
                     resolve(true);
                 }
             } else {
@@ -37,73 +68,15 @@ export class SquadLogicService {
         });
     }
 
-    private returnNextSquad(army: any): any {
-        let s: any;
-        army.squads.forEach((squad: any) => {
-            if (squad.unit.health > 0) {
-                s = squad;
-            }
-        })
+    public squadsHealth(armyName: string) {
+        const army: any = ARMIES
+            .find((army) => army.name === armyName);
 
-        return s;
-    }
+        const squadHealth = army
+            .squads
+            .map((squad: ISquad) => squad.unit.health);
 
-    public getRandomSquad(army: IArmy): any {
-        const maxNumber = army.squads.length;
-        const rndNumber = random(1, maxNumber);
-        const squad = army.squads[rndNumber - 1];
-
-        if (squad.unit.health <= 0) {
-            return army.squads.filter((squad) => squad.unit.health > 0)[0];
-        } else {
-            return squad;
-        }
-    }
-
-    public getWeakestSquad(army: IArmy): ISquad {
-        let squadNew: any = {};
-        let squads: any = {};
-
-        army.squads
-            .filter((squad) => squad.unit.health > 0)
-            .forEach((squad) => {
-                let strength = this._soldierLogic.soldierExpSum(squad.unit.soldiers) + squad.unit.health + squad.unit.soldiers.length + this.squadAttack(squad).damage;
-
-                squadNew[squad.name] = strength;
-
-                squads = {
-                    ...squads,
-                    [squad.name]: squad,
-                }
-
-            });
-
-        const squadName = Object.keys(squadNew).reduce((a, b) => squadNew[a] < squadNew[b] ? a : b);
-
-        return squads[squadName];
-    }
-
-    public getStrongestSquad(army: IArmy) {
-        let squadNew: any = {};
-        let squads: any = {};
-
-        army.squads
-            .filter((squad) => squad.unit.health > 0)
-            .forEach((squad) => {
-                let strength = this._soldierLogic.soldierExpSum(squad.unit.soldiers) + squad.unit.health + squad.unit.soldiers.length + this.squadAttack(squad).damage;
-
-                squadNew[squad.name] = strength;
-
-                squads = {
-                    ...squads,
-                    [squad.name]: squad,
-                }
-
-            });
-
-        const squadName = Object.keys(squadNew).reduce((a, b) => squadNew[a] > squadNew[b] ? a : b);
-
-        return squads[squadName];
+        return squadHealth;
     }
 
     /**
@@ -129,5 +102,61 @@ export class SquadLogicService {
 
     public getAttackingSquad(attacker: IArmy): ISquad {
         return this.getRandomSquad(attacker);
+    }
+
+    private getRandomSquad(army: IArmy): any {
+        const maxNumber = army.squads.length;
+        const rndNumber = random(1, maxNumber);
+        const squad = army.squads[rndNumber - 1];
+
+        if (squad.unit.health <= 0) {
+            return army.squads.filter((squad) => squad.unit.health > 0)[0];
+        } else {
+            return squad;
+        }
+    }
+
+    private getWeakestSquad(army: IArmy): ISquad {
+        const squadsStrength = this.getSquadsStrength(army);
+
+        const squad: any = _.minBy(squadsStrength, 'strength');
+
+        return squad;
+    }
+
+    private getStrongestSquad(army: IArmy): ISquad {
+        const squadsStrength = this.getSquadsStrength(army);
+
+        const squad: any = _.maxBy(squadsStrength, 'strength');
+        return squad;
+    }
+
+    /**
+     * This returns array of strength for each active squad
+     * 
+     * @param army 
+     */
+    private getSquadsStrength(army: IArmy): any {
+        let squads: any = [];
+
+        army.squads
+            .filter((squad) => squad.unit.health > 0)
+            .filter((squad) => squad.active)
+            .forEach((squad) => {
+                let strength = this._soldierLogic.soldierExpSum(squad.unit.soldiers)
+                    + squad.unit.health
+                    + squad.unit.soldiers.length
+                    + this.squadAttack(squad).damage;
+
+                const squadstr = {
+                    ...squad,
+                    strength,
+                }
+
+                squads.push(squadstr)
+
+            });
+
+        return squads;
     }
 }
