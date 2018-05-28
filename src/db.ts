@@ -4,7 +4,7 @@ import { ISoldier } from './model/unit';
 import * as env from 'dotenv';
 import * as uuid from 'uuid';
 import * as _ from 'lodash';
-import { random } from './logic/helper';
+import { random } from './helper';
 env.config();
 
 let squads: any = [];

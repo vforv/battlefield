@@ -1,7 +1,7 @@
 import { Service } from 'justinject';
 import { ArmyLogicService } from './army.logic';
 import { IArmy } from '../model/army';
-import { random } from './helper';
+import { random } from '../helper';
 import { ISquad } from '../model/squad';
 import { SoldierLogicService } from './soldier.logic';
 import { ARMIES } from '../db';

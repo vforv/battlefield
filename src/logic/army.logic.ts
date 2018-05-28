@@ -1,7 +1,7 @@
 import { Service } from 'justinject';
 import { ARMIES } from '../db';
-import { random } from './helper';
 import { IArmy } from '../model/army';
+import { random } from '../helper';
 
 @Service('singleton')
 export class ArmyLogicService {
