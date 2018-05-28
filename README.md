@@ -1,4 +1,4 @@
-![tradecore](https://tradecore.com/wp-content/themes/tradecore/assets/img/logo.png)
+![tradecore](https://tradecore.com/wp-content/themes/tradecore/assets/img/logo-below.png)
 
 Project test
 ==============
