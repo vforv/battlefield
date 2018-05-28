@@ -88,11 +88,19 @@ To run unit tests:
 In the root directory there is .env file which I used to configure simulation
 
 So you can setup:
+
 -- number of armies
+
 -- number of squads
+
 -- number of soldiers
+
 -- simulation speed in MS
+
 -- additional damag, it use to speed up simulation
+
 -- log detailed, if you want just simple logs keep it to false
+
 -- you can change strategy of attack to weakest or strongest, by default it will be on random
    to change strategy you can add Army[num]=stratgy
+
